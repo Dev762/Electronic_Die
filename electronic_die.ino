@@ -1,42 +1,69 @@
+#define resett 15
+#define dice 14
+
+char digit[6]={0x02, 0x79, 0x24, 0x30, 0x19, 0x12};
+int pin[7]={6,5,4,3,2,1,0};
 void setup()
 {
- randomSeed(analogRead(0)); // seed the random number generator
- for ( int z = 1 ; z < 7 ; z++ ) // LEDs on pins 1-6 are output
- {
- pinMode(z, OUTPUT);
- }
+  for(int i=0;i<7;i++)
+  pinMode(pin[i], OUTPUT);
+  pinMode(dice, INPUT);
+  pinMode(resett, INPUT);
+  digitalWrite(dice, HIGH);
+  digitalWrite(resett, HIGH);
+   int temp=0x40;
+    for(int i=0;i<7;i++)
+    {
+      int temp1=temp&0x01;
+      digitalWrite(pin[i], temp1);
+      temp=temp>>1;
+    }
+    delay(1000);
 }
-void randomLED(int del)
-{
- int r;
- r = random(1, 7); // get a random number from 1 to 6
- digitalWrite(r, HIGH); // output to the matching LED on digital pin 1-6
- if (del > 0)
- {
- delay(del); // hold the LED on for the delay received
- }
- else if (del == 0)
- {
- do // the delay entered was zero, hold the LED on
 
- {}
- while (1);
- }
- digitalWrite(r, LOW); // turn off the LED
-}
 void loop()
 {
- int a;
- // cycle the LEDs around for effect
- for ( a = 0 ; a < 100 ; a++ )
- {
- randomLED(50);
- }
- // slow down
- for ( a = 1 ; a <= 10 ; a++ )
- {
- randomLED(a * 100);
- }
- // and stop at the final random number and LED
- randomLED(0);
+  int temp=rand();
+  if(digitalRead(dice)==0)
+  {
+    int k=temp%6;
+    temp=digit[k];
+    wait();
+    for(int i=0;i<7;i++)
+    {
+      int temp1=temp&0x01;
+      digitalWrite(pin[i], temp1);
+      temp=temp>>1;
+    }
+    delay(200);
+  }
+  
+  if(digitalRead(resett)==0)
+  {
+    temp=0x40;
+    for(int i=0;i<7;i++)
+    {
+      int temp1=temp&0x01;
+      digitalWrite(pin[i], temp1);
+      temp=temp>>1;
+    }
+  }
+}
+
+void wait()
+{
+  for(int m=0;m<10;m++)
+  {
+   for(int k=0;k<6;k++)
+   {
+    int ch=digit[k];
+    for(int l=0;l<7;l++)
+    {
+      char tem2=ch&0x01;
+      digitalWrite(pin[l], tem2);
+      ch=ch>>1;
+    }
+    delay(50);
+   }
+  } 
 }
